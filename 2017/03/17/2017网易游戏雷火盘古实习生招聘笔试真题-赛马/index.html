@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next muse use-motion" lang="zh-Hans">
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -32,10 +32,6 @@
 
 
 
-
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
 
 
 
@@ -108,9 +104,9 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Muse',
+    scheme: 'Mist',
     sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
-    fancybox: true,
+    fancybox: false,
     motion: true,
     duoshuo: {
       userId: '0',
@@ -443,6 +439,27 @@
     <div>
       
         
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/w.jpg" alt="zhoujun WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/z.jpg" alt="zhoujun Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
 
       
     </div>
@@ -602,20 +619,20 @@
               </span>
             
               <span class="links-of-author-item">
-                <a href="http://weibo.com/1970773437/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                <a href="http://weibo.com/1970773437/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="Weibo">
                   
-                    <i class="fa fa-fw fa-globe"></i>
+                    <i class="fa fa-fw fa-weibo"></i>
                   
-                  微博
+                  Weibo
                 </a>
               </span>
             
               <span class="links-of-author-item">
-                <a href="https://www.zhihu.com/people/wenmu_zj/activities" target="_blank" title="知乎">
+                <a href="https://www.zhihu.com/people/wenmu_zj/activities" target="_blank" title="Zhihu">
                   
                     <i class="fa fa-fw fa-globe"></i>
                   
-                  知乎
+                  Zhihu
                 </a>
               </span>
             
@@ -626,6 +643,24 @@
         
 
         
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://mrlittlepig.github.io/" title="mrlittlepig" target="_blank">mrlittlepig</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://wustdong.github.io/" title="wustdong" target="_blank">wustdong</a>
+                </li>
+              
+            </ul>
+          </div>
         
 
         
@@ -681,7 +716,7 @@
 <div class="theme-info">
   主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Muse
+    NexT.Mist
   </a>
 </div>
 
@@ -717,8 +752,8 @@
 
 
 
-  
 
+  
 
 
 
@@ -746,7 +781,7 @@
   <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
 
 
   
