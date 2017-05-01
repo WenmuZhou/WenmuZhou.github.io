@@ -90,8 +90,8 @@
 <meta name="keywords" content="C++,数据结构,图">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据结构之图的最短生成树-prim算法">
-<meta property="og:url" content="http://yoursite.com/2017/03/15/数据结构之图的最短生成树-prim算法/index.html">
-<meta property="og:site_name" content="文幕小纪">
+<meta property="og:url" content="http://zhoujun.ml/2017/03/15/数据结构之图的最短生成树-prim算法/index.html">
+<meta property="og:site_name" content="文幕小记">
 <meta property="og:description" content="基本思想 最小生成树(Minimum cost Spanning Tree)构造连通图的最小代价生成树称为最小生成树—《大话数据结构》通俗来说就是寻找权值最小的路径集合来连接图中所有的节点。  prim算法 将起始点(可以是图中的任意节点)加入集合G. 从图中寻找到G最短的路径，加入路径集合T. 并把路径的终点加入集合G. 重复步骤2，知道G中包含所有的点 or T中边数量=点的数量-1.  为了">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1575688-3141ecc2cc6b1af5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1575688-7f098fa1dde5a9d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -127,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/15/数据结构之图的最短生成树-prim算法/"/>
+  <link rel="canonical" href="http://zhoujun.ml/2017/03/15/数据结构之图的最短生成树-prim算法/"/>
 
 
 
 
 
-  <title>数据结构之图的最短生成树-prim算法 | 文幕小纪</title>
+  <title>数据结构之图的最短生成树-prim算法 | 文幕小记</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -169,7 +169,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">文幕小纪</span>
+        <span class="site-title">文幕小记</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,7 +296,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/15/数据结构之图的最短生成树-prim算法/">
+    <link itemprop="mainEntityOfPage" href="http://zhoujun.ml/2017/03/15/数据结构之图的最短生成树-prim算法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhoujun">
@@ -305,7 +305,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="文幕小纪">
+      <meta itemprop="name" content="文幕小记">
     </span>
 
     
@@ -379,6 +379,16 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/03/15/数据结构之图的最短生成树-prim算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -395,6 +405,26 @@
              </span>
           
 
+          
+          <span class="post-time">
+              &nbsp; | &nbsp;
+           <span class="post-meta-item-icon">
+             <i class="fa fa-calendar-o"></i>
+           </span>
+           <span class="post-meta-item-text">字数统计:</span>
+           <span class="post-count">668(字)</span>
+           
+          </span>
+     
+          <span class="post-time">
+                &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-calendar-o"></i>
+               </span>
+               <span class="post-meta-item-text">阅读时长:</span>
+               <span class="post-count">3(分)</span>
+               
+          </span>
           
 
           
@@ -532,6 +562,8 @@
 
           
   <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
     
   </div>
 
@@ -725,7 +757,6 @@
   </a>
 </div>
 
-
         
 
         
@@ -829,18 +860,21 @@
 
 
   
-
-
-
-
-
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "c0ee0fc19d174fcaaf485df83efb286b",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
   
 
 
 
 
-
-  
 
 
 
@@ -1188,6 +1222,21 @@
 
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
 
