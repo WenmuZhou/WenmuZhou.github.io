@@ -7,12 +7,12 @@ title: 文幕小记
 subtitle: 人工智障研究僧，机器学习从入门到出门
 description: 人工智障研究僧，机器学习从入门到出门
 author: zhoujun
-language: zh-Hans
+language: zh-CN
 timezone: 
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://zhoujun.ml
+url: http://zhoujun.ltd
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -72,7 +72,6 @@ deploy:
   type: git
   repository:
     github: https://github.com/WenmuZhou/WenmuZhou.github.io.git,master
-    coding: https://git.coding.net/zhoujun123/zhoujun123.coding.me.git,master
 
 search:
   path: search.xml
