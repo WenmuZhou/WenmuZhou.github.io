@@ -69,12 +69,21 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
-  repository:
-    github: https://github.com/WenmuZhou/WenmuZhou.github.io.git,master
+- type: git
+  repo: https://github.com/WenmuZhou/WenmuZhou.github.io.git
+  branch: master
+- type: leancloud_counter_security_sync
+  repo:
 
 search:
   path: search.xml
   field: post
   format: html
   limit: 10000
+
+leancloud_counter_security:
+  enable_sync: true
+  app_id: Q3ehw806KbOUxUDa0f3zIxHV-gzGzoHsz
+  app_key: V7ubL0nlWT6218Kj1atK3b1q
+  username: zj
+  password: zj
