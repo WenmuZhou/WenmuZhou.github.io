@@ -1,5 +1,5 @@
 ---
-title: 2017CVTE-C++笔试题-求最大和子序列
+title: CVTE-C++笔试题-求最大和子序列
 date: 2017/03/26 20:27:00
 comments: true
 categories: 
