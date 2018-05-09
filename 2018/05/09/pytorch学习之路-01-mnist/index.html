@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="说明本文使用pytorch从mnsit原始图像开始学习并完成输入图像的预测 数据集介绍mnsit是一个广泛使用的手写数字数据集，其包含60000张训练数据集，10000张测试数据集。数据集长这样。  但是从网上下载的数据集一般不是jpg或png格式的,下载的数据长这样。 如何将数据集转换成jpg或者png文件，请参考这篇博客 mnist数据集转换 自定义dataset这里使用自定义的dataset">
+<meta name="keywords" content="Pytorch,mnist">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch学习之路-01-mnist">
+<meta property="og:url" content="http://zhoujun.ltd/2018/05/09/pytorch学习之路-01-mnist/index.html">
+<meta property="og:site_name" content="文幕小记">
+<meta property="og:description" content="说明本文使用pytorch从mnsit原始图像开始学习并完成输入图像的预测 数据集介绍mnsit是一个广泛使用的手写数字数据集，其包含60000张训练数据集，10000张测试数据集。数据集长这样。  但是从网上下载的数据集一般不是jpg或png格式的,下载的数据长这样。 如何将数据集转换成jpg或者png文件，请参考这篇博客 mnist数据集转换 自定义dataset这里使用自定义的dataset">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4t4e8d0ej207305oaa8.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4t57bnedj20em02k3yq.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tryk4hyj20f702jdfw.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4ttxkaxdj21540aqq77.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4ttxkaxdj21540aqq77.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tvaxhvmj20bo2omaet.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tyc9zt9j200k00k0ih.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4twpxk5jj20r803574h.jpg">
+<meta property="og:updated_time" content="2018-05-09T01:34:45.571Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pytorch学习之路-01-mnist">
+<meta name="twitter:description" content="说明本文使用pytorch从mnsit原始图像开始学习并完成输入图像的预测 数据集介绍mnsit是一个广泛使用的手写数字数据集，其包含60000张训练数据集，10000张测试数据集。数据集长这样。  但是从网上下载的数据集一般不是jpg或png格式的,下载的数据长这样。 如何将数据集转换成jpg或者png文件，请参考这篇博客 mnist数据集转换 自定义dataset这里使用自定义的dataset">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4t4e8d0ej207305oaa8.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://zhoujun.ltd/2018/05/09/pytorch学习之路-01-mnist/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>pytorch学习之路-01-mnist | 文幕小记</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">文幕小记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人工智障研究僧，机器学习从入门到出门</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+    <a href="/404.html" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益 404</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhoujun.ltd/2018/05/09/pytorch学习之路-01-mnist/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhoujun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/huaji.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="文幕小记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">pytorch学习之路-01-mnist
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-09 08:43:00 / 修改时间：09:34:45" itemprop="dateCreated datePublished" datetime="2018-05-09T08:43:00+08:00">2018-05-09</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Pytorch/" itemprop="url" rel="index"><span itemprop="name">Pytorch</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/09/pytorch学习之路-01-mnist/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2018/05/09/pytorch学习之路-01-mnist/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/05/09/pytorch学习之路-01-mnist/" class="leancloud_visitors" data-flag-title="pytorch学习之路-01-mnist">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>本文使用pytorch从mnsit原始图像开始学习并完成输入图像的预测</p>
+<h1 id="数据集介绍"><a href="#数据集介绍" class="headerlink" title="数据集介绍"></a>数据集介绍</h1><p>mnsit是一个广泛使用的手写数字数据集，其包含60000张训练数据集，10000张测试数据集。数据集长这样。</p>
+<p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4t4e8d0ej207305oaa8.jpg" alt="mnist数据"></p>
+<p>但是从网上下载的数据集一般不是jpg或png格式的,下载的数据长这样。<br><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4t57bnedj20em02k3yq.jpg" alt="mnist数据集格式"></p>
+<p>如何将数据集转换成jpg或者png文件，请参考这篇博客 <a href="https://blog.csdn.net/qq_32166627/article/details/52640730" target="_blank" rel="noopener">mnist数据集转换</a></p>
+<h1 id="自定义dataset"><a href="#自定义dataset" class="headerlink" title="自定义dataset"></a>自定义dataset</h1><p>这里使用自定义的dataset来完成对mnsit数据集的加载,在pytorch中自定义dataset需要继承自<code>torch.utils.data.Dataset</code>，并且要实现<code>__init__</code>,<code>__getitem__</code>和<code>__len__</code>方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDataset</span><span class="params">(torch.utils.data.Dataset)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, txt, data_shape,channel=<span class="number">3</span>, transform=None, target_transform=None)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param txt:</span></span><br><span class="line"><span class="string">        :param data_shape:</span></span><br><span class="line"><span class="string">        :param channel:</span></span><br><span class="line"><span class="string">        :param transform:</span></span><br><span class="line"><span class="string">        :param target_transform:</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        fh = open(txt, <span class="string">'r'</span>)</span><br><span class="line">        data = []</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> fh:</span><br><span class="line">            line = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">            line = line.rstrip()</span><br><span class="line">            words = line.split()</span><br><span class="line">            data.append((words[<span class="number">0</span>], int(words[<span class="number">1</span>])))</span><br><span class="line">        self.data = data</span><br><span class="line">        self.transform = transform</span><br><span class="line">        self.target_transform = target_transform</span><br><span class="line">        self.data_shape = data_shape</span><br><span class="line">        self.channel = channel</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, index)</span>:</span></span><br><span class="line">        img_path, label = self.data[index]</span><br><span class="line">        <span class="keyword">if</span> self.channel == <span class="number">3</span>:</span><br><span class="line">            img = cv2.imread(img_path,<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            img = cv2.imread(img_path, <span class="number">0</span>)</span><br><span class="line">        img = cv2.resize(img, (self.data_shape[<span class="number">0</span>], self.data_shape[<span class="number">1</span>]))</span><br><span class="line">        img = np.reshape(img,(self.data_shape[<span class="number">0</span>], self.data_shape[<span class="number">1</span>],self.channel))</span><br><span class="line">        <span class="keyword">if</span> self.transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            img = self.transform(img)</span><br><span class="line">        <span class="keyword">return</span> img, label</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self.data)</span><br></pre></td></tr></table></figure>
+<h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p>这里使用<code>torchvision</code>里自带的<code>alexnet</code></p>
+<h2 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> Data</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> data_loader <span class="keyword">import</span> MyDataset</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> tensorboardX <span class="keyword">import</span> SummaryWriter</span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">"cuda:0"</span>)</span><br><span class="line">print(<span class="string">'training with:'</span>, device)</span><br><span class="line">num_epochs = <span class="number">3</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line"></span><br><span class="line">train_data = MyDataset(txt=<span class="string">'/data/datasets/mnist/train.txt'</span>, data_shape=(<span class="number">227</span>, <span class="number">227</span>), channel=<span class="number">3</span>,</span><br><span class="line">                       transform=transforms.ToTensor())</span><br><span class="line">train_loader = Data.DataLoader(</span><br><span class="line">    dataset=train_data, batch_size=batch_size, shuffle=<span class="keyword">True</span>, num_workers=<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">model = torchvision.models.AlexNet(num_classes=<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 准备写tensorboard, 必须放在'.to(device)'之前，不然会报错</span></span><br><span class="line">writer = SummaryWriter()</span><br><span class="line">dummy_input = torch.autograd.Variable(torch.rand(<span class="number">1</span>, <span class="number">3</span>, <span class="number">227</span>, <span class="number">227</span>))</span><br><span class="line">writer.add_graph(model=model, input_to_model=(dummy_input, ))</span><br><span class="line"></span><br><span class="line">model = model.to(device)</span><br><span class="line"></span><br><span class="line">criterion = torch.nn.CrossEntropyLoss()</span><br><span class="line">optimizer = torch.optim.Adam(model.parameters(), lr=<span class="number">0.001</span>)</span><br><span class="line">scheduler = torch.optim.lr_scheduler.StepLR(optimizer, <span class="number">5</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">model.train()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">    scheduler.step()</span><br><span class="line">    train_acc, train_loss = <span class="number">0.</span>, <span class="number">0.</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    <span class="keyword">for</span> i, (images, labels) <span class="keyword">in</span> enumerate(train_loader):</span><br><span class="line">        images, labels = images.to(device), labels.to(device)</span><br><span class="line">        <span class="comment"># Forward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        out = model(images)</span><br><span class="line">        <span class="comment"># Backward</span></span><br><span class="line">        loss = criterion(out, labels)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        train_loss += loss.item()</span><br><span class="line">        _, preds = torch.max(out.data, <span class="number">1</span>)</span><br><span class="line">        correct = preds.eq(labels.data).sum().item()</span><br><span class="line">        acc = correct / labels.size(<span class="number">0</span>)</span><br><span class="line">        train_acc += correct</span><br><span class="line"></span><br><span class="line">        cur_step = epoch * (train_data.__len__()/batch_size)+i</span><br><span class="line">        writer.add_scalar(tag=<span class="string">'Train/loss'</span>, scalar_value=loss.item(), global_step=cur_step)</span><br><span class="line">        writer.add_scalar(tag=<span class="string">'Train/acc'</span>, scalar_value=acc, global_step=cur_step)</span><br><span class="line">        <span class="comment"># if i % 1 == 0:</span></span><br><span class="line">        <span class="comment"># print('Iteration: &#123;&#125;. Loss: &#123;&#125;. Accuracy: &#123;&#125;'.format(cur_step, loss.item(), acc))</span></span><br><span class="line">    print(<span class="string">'epoch [%d/%d], loss: %.4f, acc: %.4f, time:%0.4f, lr:%s'</span> % (</span><br><span class="line">        epoch + <span class="number">1</span>, num_epochs, train_loss /</span><br><span class="line">        len(train_data), train_acc / len(train_loader.dataset),</span><br><span class="line">        time.time() - start, str(scheduler.get_lr()[<span class="number">0</span>])))</span><br><span class="line">writer.close()</span><br><span class="line">torch.save(model, <span class="string">'AlexNet1.pkl'</span>)</span><br></pre></td></tr></table></figure>
+<p>在训练时有一些超参数设置如下<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">epoch = 3 <span class="comment"># 数据集学习多少次</span></span><br><span class="line">batch_size = 64 <span class="comment"># 每次计算多少张图像</span></span><br></pre></td></tr></table></figure></p>
+<p>为了可视化训练结果，使用了<a href="https://github.com/lanpa/tensorboard-pytorch" target="_blank" rel="noopener">tensorboardX</a>包,<br>这个包将tensorflow的tensorboard功能弄到了pytorch里面。需要注意的是，可视化网络要在<code>model.to(device)</code>之后使用，不然会报错。</p>
+<p>在终端中使用下面的命令来启动训练<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python train.py</span><br></pre></td></tr></table></figure></p>
+<h3 id="训练结果如下"><a href="#训练结果如下" class="headerlink" title="训练结果如下"></a>训练结果如下</h3><p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tryk4hyj20f702jdfw.jpg" alt="训练结果"></p>
+<p>可视化结果</p>
+<p>loss<br><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4ttxkaxdj21540aqq77.jpg" alt="loss"></p>
+<p>acc<br><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4ttxkaxdj21540aqq77.jpg" alt="acc"></p>
+<p>网络结构图</p>
+<p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tvaxhvmj20bo2omaet.jpg" alt="Alexnet网络结构图"></p>
+<h2 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h2><p>拿到模型之后，我们来预测一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pytorch_model</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, model_path, img_shape, img_channel=<span class="number">3</span>, gpu_id=None, classes_txt=None)</span>:</span></span><br><span class="line">        self.gpu_id = gpu_id</span><br><span class="line">        self.img_shape = img_shape</span><br><span class="line">        self.img_channel = img_channel</span><br><span class="line">        <span class="keyword">if</span> self.gpu_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> isinstance(self.gpu_id, int) <span class="keyword">and</span> torch.cuda.is_available():</span><br><span class="line">            self.device = torch.device(<span class="string">"cuda:%s"</span> %(self.gpu_id))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.device = torch.device(<span class="string">"cpu"</span>)</span><br><span class="line">        print(self.device)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.gpu_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> isinstance(self.gpu_id, int):</span><br><span class="line">            self.use_gpu = <span class="keyword">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.use_gpu = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.use_gpu:</span><br><span class="line">            self.net = torch.load(model_path, map_location=<span class="keyword">lambda</span> storage, loc: storage.cpu())</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.net = torch.load(model_path, map_location=<span class="keyword">lambda</span> storage, loc: storage.cuda(gpu_id))</span><br><span class="line">        self.net.eval()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> classes_txt <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">with</span> open(classes_txt, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">                self.idx2label = dict(line.strip().split(<span class="string">' '</span>) <span class="keyword">for</span> line <span class="keyword">in</span> f <span class="keyword">if</span> line)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.idx2label = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self, img, is_numpy=False, topk=<span class="number">1</span>)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> len(self.img_shape) <span class="keyword">not</span> <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>] <span class="keyword">or</span> self.img_channel <span class="keyword">not</span> <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">3</span>]:</span><br><span class="line">            <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> is_numpy <span class="keyword">and</span> self.img_channel <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">3</span>]: <span class="comment"># read image</span></span><br><span class="line">            <span class="keyword">if</span> os.path.exists(img):</span><br><span class="line">                img = cv2.imread(img, <span class="number">0</span> <span class="keyword">if</span> self.img_channel == <span class="number">1</span> <span class="keyword">else</span> <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">'file is not exists'</span></span><br><span class="line"></span><br><span class="line">        img = cv2.resize(img, (self.img_shape[<span class="number">0</span>], self.img_shape[<span class="number">1</span>]))</span><br><span class="line">        <span class="keyword">if</span> len(img.shape) == <span class="number">2</span> <span class="keyword">and</span> self.img_channel == <span class="number">3</span>:</span><br><span class="line">            img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)</span><br><span class="line">        <span class="keyword">elif</span> len(img.shape) == <span class="number">3</span> <span class="keyword">and</span> self.img_channel == <span class="number">1</span>:</span><br><span class="line">            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        img = img.reshape([self.img_shape[<span class="number">0</span>], self.img_shape[<span class="number">1</span>], self.img_channel])</span><br><span class="line">        tensor = transforms.ToTensor()(img)</span><br><span class="line">        tensor = tensor.unsqueeze_(<span class="number">0</span>)</span><br><span class="line">        tensor = Variable(tensor)</span><br><span class="line"></span><br><span class="line">        tensor = tensor.to(self.device)</span><br><span class="line">        outputs = F.softmax(self.net(tensor),dim=<span class="number">1</span>)</span><br><span class="line">        result = torch.topk(outputs.data[<span class="number">0</span>], k=topk)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.device != <span class="string">"cpu"</span>:</span><br><span class="line">            index = result[<span class="number">1</span>].cpu().numpy().tolist()</span><br><span class="line">            prob = result[<span class="number">0</span>].cpu().numpy().tolist()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            index = result[<span class="number">1</span>].numpy().tolist()</span><br><span class="line">            prob = result[<span class="number">0</span>].numpy().tolist()</span><br><span class="line">        <span class="keyword">if</span> self.idx2label <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            label = []</span><br><span class="line">            <span class="keyword">for</span> idx <span class="keyword">in</span> index:</span><br><span class="line">                label.append(self.idx2label[str(idx)])</span><br><span class="line">            result = label, prob</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result = index, prob</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    parser = argparse.ArgumentParser()</span><br><span class="line">    parser.add_argument(<span class="string">'-f'</span>,<span class="string">'--file'</span>, type=str, help=<span class="string">'test image file'</span>)</span><br><span class="line">    parser.add_argument(<span class="string">'-m'</span>,<span class="string">'--model'</span>, type=str, help=<span class="string">'model used'</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    img_path = args.file</span><br><span class="line">    model_path = args.model</span><br><span class="line">    img_shape = [<span class="number">227</span>,<span class="number">227</span>]</span><br><span class="line">    img_channel = <span class="number">3</span></span><br><span class="line">     <span class="comment"># test cpu speed</span></span><br><span class="line">    model = Pytorch_model(model_path, img_shape=img_shape,img_channel=img_channel, classes_txt=<span class="string">'labels.txt'</span>)</span><br><span class="line">    start_cpu = time.time()</span><br><span class="line">    epoch = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(epoch):</span><br><span class="line">        start = time.time()</span><br><span class="line">        result = model.predict(img_path,topk=<span class="number">3</span>)</span><br><span class="line">        print(<span class="string">'device: cpu, result:%s, time: %.4f'</span> % (str(result), time.time() - start))</span><br><span class="line">    end_cpu = time.time()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># test gpu speed</span></span><br><span class="line">    model1 = Pytorch_model(model_path=model_path, img_shape=img_shape,img_channel=img_channel, gpu_id=<span class="number">0</span>, classes_txt=<span class="string">'labels.txt'</span>)</span><br><span class="line">    start_gpu = time.time()</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(epoch):</span><br><span class="line">        start = time.time()</span><br><span class="line">        result = model1.predict(img_path,topk=<span class="number">3</span>)</span><br><span class="line">        print(<span class="string">'device: gpu, result:%s, time: %.4f'</span> % (str(result), time.time() - start))</span><br><span class="line">    end_gpu = time.time()</span><br><span class="line">    print(<span class="string">'cpu avg time: %.4f'</span> % ((end_cpu - start_cpu) / epoch))</span><br><span class="line">    print(<span class="string">'gpu avg time: %.4f'</span> % ((end_gpu - start_gpu) / epoch))</span><br></pre></td></tr></table></figure>
+<p>调用代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python predict.py -f /data/datasets/mnist/test/<span class="number">0</span>/<span class="number">0</span>_1.png -m AlexNet.pkl</span><br></pre></td></tr></table></figure></p>
+<p>使用的预测图像为</p>
+<p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tyc9zt9j200k00k0ih.jpg" alt="预测图像"></p>
+<p>预测结果如下，脚本输出了top3分别为</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th style="text-align:right">置信度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td style="text-align:right">0.999999</td>
+</tr>
+<tr>
+<td>9</td>
+<td style="text-align:right">0.000002</td>
+</tr>
+<tr>
+<td>6</td>
+<td style="text-align:right">0.000002</td>
+</tr>
+</tbody>
+</table>
+<p>作者：Gaolex<br>链接：<a href="https://www.jianshu.com/p/abaff828100d" target="_blank" rel="noopener">https://www.jianshu.com/p/abaff828100d</a><br>來源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4twpxk5jj20r803574h.jpg" alt="预测结果"></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/w.jpg" alt="zhoujun 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/z.jpg" alt="zhoujun 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+          
+            <a href="/tags/mnist/" rel="tag"># mnist</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/12/git操作/" rel="next" title="git操作">
+                <i class="fa fa-chevron-left"></i> git操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/huaji.jpg"
+                alt="zhoujun" />
+            
+              <p class="site-author-name" itemprop="name">zhoujun</p>
+              <p class="site-description motion-element" itemprop="description">人工智障研究僧，机器学习从入门到出门</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/WenMuZhou" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:zjwenmu@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/wenmu_zj" target="_blank" title="知乎"><i class="fa fa-fw fa-globe"></i>知乎</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.jianshu.com/u/a4765dedfdf4" target="_blank" title="简书"><i class="fa fa-fw fa-globe"></i>简书</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://mrlittlepig.github.io/" title="mrlittlepig" target="_blank">mrlittlepig</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wustdong.github.io/" title="wustdong" target="_blank">wustdong</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据集介绍"><span class="nav-number">2.</span> <span class="nav-text">数据集介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义dataset"><span class="nav-number">3.</span> <span class="nav-text">自定义dataset</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络"><span class="nav-number">3.1.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练"><span class="nav-number">3.2.</span> <span class="nav-text">训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练结果如下"><span class="nav-number">3.2.1.</span> <span class="nav-text">训练结果如下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预测"><span class="nav-number">3.3.</span> <span class="nav-text">预测</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhoujun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Mist</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'Q3ehw806KbOUxUDa0f3zIxHV-gzGzoHsz',
+        appKey: 'V7ubL0nlWT6218Kj1atK3b1q',
+        placeholder: 'ヾﾉ≧∀≦)o 来呀！快活呀！~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Q3ehw806KbOUxUDa0f3zIxHV-gzGzoHsz", "V7ubL0nlWT6218Kj1atK3b1q");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! See more at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see here how to solve it: https://github.com/theme-next/hexo-leancloud-counter-security. \n But you also can use LeanCloud without security, by set \'security\' option to \'false\'.');
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 --> 
+<script type="text/javascript" src="/js/src/love.js"></script>
