@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tvaxhvmj20bo2omaet.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tyc9zt9j200k00k0ih.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/75779dbdgy1fr4twpxk5jj20r803574h.jpg">
-<meta property="og:updated_time" content="2018-05-09T01:42:07.312Z">
+<meta property="og:updated_time" content="2018-05-09T01:45:38.392Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pytorch学习之路-01-mnist">
 <meta name="twitter:description" content="说明本文使用pytorch从mnsit原始图像开始学习并完成输入图像的预测 数据集介绍mnsit是一个广泛使用的手写数字数据集，其包含60000张训练数据集，10000张测试数据集。数据集长这样。  但是从网上下载的数据集一般不是jpg或png格式的,下载的数据长这样。 如何将数据集转换成jpg或者png文件，请参考这篇博客 mnist数据集转换 自定义dataset这里使用自定义的dataset">
@@ -392,7 +392,7 @@
                 
               
 
-              <time title="创建时间：2018-05-09 08:43:00 / 修改时间：09:42:07" itemprop="dateCreated datePublished" datetime="2018-05-09T08:43:00+08:00">2018-05-09</time>
+              <time title="创建时间：2018-05-09 08:43:00 / 修改时间：09:45:38" itemprop="dateCreated datePublished" datetime="2018-05-09T08:43:00+08:00">2018-05-09</time>
             
 
             
@@ -481,7 +481,8 @@
 <p>在训练时有一些超参数设置如下<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">epoch = 3 <span class="comment"># 数据集学习多少次</span></span><br><span class="line">batch_size = 64 <span class="comment"># 每次计算多少张图像</span></span><br></pre></td></tr></table></figure></p>
 <p>为了可视化训练结果，使用了<a href="https://github.com/lanpa/tensorboard-pytorch" target="_blank" rel="noopener">tensorboardX</a>包,<br>这个包将tensorflow的tensorboard功能弄到了pytorch里面。需要注意的是，可视化网络要在<code>model.to(device)</code>之后使用，不然会报错。</p>
 <p>在终端中使用下面的命令来启动训练<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python train.py</span><br></pre></td></tr></table></figure></p>
-<h2 id="训练结果如下"><a href="#训练结果如下" class="headerlink" title="训练结果如下"></a>训练结果如下</h2><p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tryk4hyj20f702jdfw.jpg" alt="训练结果"></p>
+<p>训练结果如下</p>
+<p><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4tryk4hyj20f702jdfw.jpg" alt="训练结果"></p>
 <p>可视化结果</p>
 <p>loss<br><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4ttxkaxdj21540aqq77.jpg" alt="loss"></p>
 <p>acc<br><img src="https://ws1.sinaimg.cn/large/75779dbdgy1fr4ttxkaxdj21540aqq77.jpg" alt="acc"></p>
@@ -810,7 +811,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据集介绍"><span class="nav-number">2.</span> <span class="nav-text">数据集介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义dataset"><span class="nav-number">3.</span> <span class="nav-text">自定义dataset</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络"><span class="nav-number">4.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练"><span class="nav-number">5.</span> <span class="nav-text">训练</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练结果如下"><span class="nav-number">5.1.</span> <span class="nav-text">训练结果如下</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预测"><span class="nav-number">6.</span> <span class="nav-text">预测</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据集介绍"><span class="nav-number">2.</span> <span class="nav-text">数据集介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义dataset"><span class="nav-number">3.</span> <span class="nav-text">自定义dataset</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络"><span class="nav-number">4.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练"><span class="nav-number">5.</span> <span class="nav-text">训练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预测"><span class="nav-number">6.</span> <span class="nav-text">预测</span></a></li></ol></div>
             
 
           </div>
