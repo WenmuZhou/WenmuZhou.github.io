@@ -94,12 +94,12 @@ train_loader = Data.DataLoader(
     dataset=train_data, batch_size=batch_size, shuffle=True, num_workers=3)
 
 model = torchvision.models.AlexNet(num_classes=10)
-# 准备写tensorboard, 必须放在'.to(device)'之前，不然会报错
-writer = SummaryWriter()
-dummy_input = torch.autograd.Variable(torch.rand(1, 3, 227, 227))
-writer.add_graph(model=model, input_to_model=(dummy_input, ))
-
 model = model.to(device)
+# 准备写tensorboard
+writer = SummaryWriter()
+dummy_input = torch.autograd.Variable(torch.rand(1, 3, 227, 227).to(device))
+writer.add_graph(model=model, input_to_model=dummy_input)
+
 
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
